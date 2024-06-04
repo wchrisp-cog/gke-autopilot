@@ -23,7 +23,7 @@ provider "google" {
 
   default_labels = {
     project    = "gke-playground"
-    repository = "https://github.com/wchrisp-cog/gke/tree/main"
+    repository = "gke-autopilot"
   }
 }
 

@@ -8,6 +8,10 @@ data "google_compute_subnetwork" "subnet" {
   depends_on = [module.gcp-network]
 }
 
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
 data "http" "ip" {
   url = "https://ifconfig.me/ip"
 }

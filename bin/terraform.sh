@@ -16,14 +16,14 @@ terraform_init()
 			-backend-config="bucket=${TF_STATE_FILE_BUCKET}" \
 			-backend-config="prefix=${GIT_REPO}"
 	fi 
-	terraform -chdir=${TF_DIRECTORY} validate
-	terraform -chdir=${TF_DIRECTORY} fmt --check --diff --recursive
+	terraform -chdir=${TF_DIRECTORY} validate || exit 1
+	terraform -chdir=${TF_DIRECTORY} fmt --check --diff --recursive || exit 1
 }
 
 terraform_plan()
 {
 	rm -f terraform/tf.plan terraform/tf.plan.json
-	terraform -chdir=${TF_DIRECTORY} plan -var-file=${TF_VARS_FILE} -out=tf.plan
+	terraform -chdir=${TF_DIRECTORY} plan -var-file=${TF_VARS_FILE} -out=tf.plan || exit 1
 	terraform -chdir=${TF_DIRECTORY} show -json tf.plan  > ${TF_DIRECTORY}/tf.plan.json
 	echo "Press enter to continue..."
 	read -r

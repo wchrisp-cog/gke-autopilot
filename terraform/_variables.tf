@@ -8,11 +8,6 @@ variable "region" {
   type        = string
 }
 
-variable "cluster_zone" {
-  description = "GCP GKE Cluster Zone"
-  type        = string
-}
-
 variable "cluster_name" {
   description = "GCP GKE Cluster Name"
   type        = string
@@ -20,24 +15,30 @@ variable "cluster_name" {
 
 variable "deletion_protection" {
   description = "Whether or not to allow Terraform to destroy the cluster."
-  type = bool
-  default = true
+  type        = bool
+  default     = null
+}
+
+variable "kubernetes_version" {
+  description = "The Kubernetes version of the masters. If set to 'latest' it will pull latest available version in the selected region."
+  type        = string
+  default     = null
 }
 
 variable "network_tags" {
   description = "(Optional) - List of network tags applied to auto-provisioned node pools."
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "maintenance_period" {
   description = "Time window specified for recurring maintenance"
   type = object({
-    start_time = string,
-    end_time   = string,
-    recurrence = string
+    start_time = optional(string, null),
+    end_time   = optional(string, null),
+    recurrence = optional(string, null)
   })
-  default = null
+  default = {}
 }
 
 variable "maintenance_exclusions" {
@@ -47,11 +48,11 @@ variable "maintenance_exclusions" {
     start_time = string,
     end_time   = string,
   exclusion_scope = string }))
-  default = null
+  default = []
 }
 
 variable "release_channel" {
   description = "The release channel of this cluster. Accepted values are UNSPECIFIED, RAPID, REGULAR and STABLE. Defaults to REGULAR."
-  type = string
-  default = "REGULAR"
+  type        = string
+  default     = null
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 BREW_CASKS="google-cloud-sdk"
-BREW_PKGS="kubernetes-cli infracost argocd tfenv checkov dotenvx/brew/dotenvx"
+BREW_PKGS="kubernetes-cli infracost argocd tfenv checkov"
 
 envs()
 {

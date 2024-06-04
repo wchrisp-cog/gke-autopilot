@@ -55,6 +55,8 @@ module "gke" {
   name                            = var.cluster_name
   regional                        = true
   region                          = var.region
+  kubernetes_version              = var.kubernetes_version
+  network_project_id              = module.gcp-network.project_id
   network                         = module.gcp-network.network_name
   subnetwork                      = local.subnet_names[index(module.gcp-network.subnets_names, local.subnet_name)]
   ip_range_pods                   = local.pods_range_name
@@ -65,6 +67,10 @@ module "gke" {
   enable_private_nodes            = true
   network_tags                    = var.network_tags
   deletion_protection             = var.deletion_protection
+  database_encryption = [{
+    state    = "ENCRYPTED"
+    key_name = google_kms_crypto_key.kubernetes_secrets.id
+  }]
 
   master_authorized_networks = [
     {
@@ -77,4 +83,29 @@ module "gke" {
   maintenance_end_time   = var.maintenance_period.end_time
   maintenance_recurrence = var.maintenance_period.recurrence
   maintenance_exclusions = var.maintenance_exclusions
+
+}
+
+resource "google_kms_key_ring" "kubernetes_secrets" {
+  name     = "${var.cluster_name}-kms-key-ring"
+  location = var.region
+}
+
+resource "google_kms_crypto_key" "kubernetes_secrets" {
+  name            = "${var.cluster_name}-kms-key"
+  key_ring        = google_kms_key_ring.kubernetes_secrets.id
+  rotation_period = "7776000s"
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+resource "google_kms_crypto_key_iam_binding" "kubernetes_secrets" {
+  crypto_key_id = google_kms_crypto_key.kubernetes_secrets.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  members = [
+    "serviceAccount:${module.gke.service_account}",
+    "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
+  ]
 }

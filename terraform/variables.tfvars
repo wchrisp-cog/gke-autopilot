@@ -1,5 +1,7 @@
 deletion_protection = false
-release_channel = "REGULAR"
+release_channel     = "REGULAR"
+# kubernetes_version = "1.28.9-gke.1000000"
+
 
 # Maintenance Period
 maintenance_period = {

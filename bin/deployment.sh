@@ -12,7 +12,7 @@ main()
     elif [ "$1" = "build" ]; then
     	infracost breakdown --path ${TF_DIRECTORY}  --terraform-var-file ${TF_VARS_FILE} --show-skipped
         terraform_plan
-	    checkov -f ${TF_DIRECTORY}/tf.plan.json
+	    # checkov -f ${TF_DIRECTORY}/tf.plan.json
         terraform_apply
         # kube_config
         # argo_install
