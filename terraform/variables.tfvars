@@ -1,6 +1,10 @@
+cluster_name = "playground-test"
+environment  = "nonprod"
+tier         = "hsec"
+
 deletion_protection = false
 release_channel     = "REGULAR"
-# kubernetes_version = "1.28.9-gke.1000000"
+# kubernetes_version  = "1.28.8-gke.1095000"
 
 
 # Maintenance Period
@@ -42,4 +46,11 @@ maintenance_exclusions = [
     end_time        = "2024-07-03T00:00:00Z"
     exclusion_scope = "NO_MINOR_OR_NODE_UPGRADES"
   }
+]
+
+master_authorized_networks = [
+  {
+    cidr_block   = "10.60.0.0/17"
+    display_name = "VPC"
+  },
 ]

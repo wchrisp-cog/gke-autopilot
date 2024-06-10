@@ -13,6 +13,16 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "tier" {
+  description = "GCP GKE Cluster tier"
+  type        = string
+}
+
+variable "environment" {
+  description = "GCP GKE Cluster environment"
+  type        = string
+}
+
 variable "deletion_protection" {
   description = "Whether or not to allow Terraform to destroy the cluster."
   type        = bool
@@ -34,11 +44,11 @@ variable "network_tags" {
 variable "maintenance_period" {
   description = "Time window specified for recurring maintenance"
   type = object({
-    start_time = optional(string, null),
-    end_time   = optional(string, null),
-    recurrence = optional(string, null)
+    start_time = string,
+    end_time   = string,
+    recurrence = string
   })
-  default = {}
+  default = null
 }
 
 variable "maintenance_exclusions" {
@@ -53,6 +63,18 @@ variable "maintenance_exclusions" {
 
 variable "release_channel" {
   description = "The release channel of this cluster. Accepted values are UNSPECIFIED, RAPID, REGULAR and STABLE. Defaults to REGULAR."
+  type        = string
+  default     = null
+}
+
+variable "master_authorized_networks" {
+  type        = list(object({ cidr_block = string, display_name = string }))
+  description = "List of master authorized networks. If none are provided, disallow external access (except the cluster node IPs, which GKE automatically whitelists)."
+  default     = []
+}
+
+variable "fleet_project" {
+  description = "(Optional) Register the cluster with the fleet in this project."
   type        = string
   default     = null
 }

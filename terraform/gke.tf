@@ -1,3 +1,46 @@
+# K8s Cluster
+module "gke" {
+  source = "./modules/gcp-gke-autopilot-module"
+
+  project_id  = var.project_id
+  name        = var.cluster_name
+  tier        = var.tier
+  environment = var.environment
+  region      = var.region
+  fleet_project = var.fleet_project
+  fleet_project_grant_service_agent = false
+
+  release_channel    = var.release_channel
+  kubernetes_version = var.kubernetes_version
+
+  maintenance_period        = var.maintenance_period
+  maintenance_exclusions    = var.maintenance_exclusions
+  notification_config_topic = google_pubsub_topic.example.id
+
+  network_project_id         = module.gcp-network.project_id
+  network                    = module.gcp-network.network_name
+  subnetwork                 = local.subnet_names[index(module.gcp-network.subnets_names, local.subnet_name)]
+  ip_range_pods              = local.pods_range_name
+  ip_range_services          = local.svc_range_name
+  enable_private_endpoint    = true
+  enable_private_nodes       = true
+  network_tags               = var.network_tags
+  master_authorized_networks = var.master_authorized_networks
+  configure_ip_masq          = true
+
+  enable_vertical_pod_autoscaling = true
+  database_encryption = [{
+    state    = "ENCRYPTED"
+    key_name = google_kms_crypto_key.database_encryption.id
+  }]
+
+  deletion_protection = var.deletion_protection
+}
+
+##
+#### EXTRA RESOURCES
+##
+
 # K8s Network
 module "gcp-network" {
   source  = "terraform-google-modules/network/google"
@@ -46,54 +89,15 @@ resource "google_compute_router_nat" "nat" {
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
-# K8s Cluster
-module "gke" {
-  source  = "terraform-google-modules/kubernetes-engine/google//modules/beta-autopilot-private-cluster"
-  version = "~> 30.0"
-
-  project_id                      = var.project_id
-  name                            = var.cluster_name
-  regional                        = true
-  region                          = var.region
-  kubernetes_version              = var.kubernetes_version
-  network_project_id              = module.gcp-network.project_id
-  network                         = module.gcp-network.network_name
-  subnetwork                      = local.subnet_names[index(module.gcp-network.subnets_names, local.subnet_name)]
-  ip_range_pods                   = local.pods_range_name
-  ip_range_services               = local.svc_range_name
-  release_channel                 = var.release_channel
-  enable_vertical_pod_autoscaling = true
-  enable_private_endpoint         = true
-  enable_private_nodes            = true
-  network_tags                    = var.network_tags
-  deletion_protection             = var.deletion_protection
-  database_encryption = [{
-    state    = "ENCRYPTED"
-    key_name = google_kms_crypto_key.kubernetes_secrets.id
-  }]
-
-  master_authorized_networks = [
-    {
-      cidr_block   = "10.60.0.0/17"
-      display_name = "VPC"
-    },
-  ]
-
-  maintenance_start_time = var.maintenance_period.start_time
-  maintenance_end_time   = var.maintenance_period.end_time
-  maintenance_recurrence = var.maintenance_period.recurrence
-  maintenance_exclusions = var.maintenance_exclusions
-
-}
-
-resource "google_kms_key_ring" "kubernetes_secrets" {
+#K8s Database encryption keys
+resource "google_kms_key_ring" "database_encryption" {
   name     = "${var.cluster_name}-kms-key-ring"
   location = var.region
 }
 
-resource "google_kms_crypto_key" "kubernetes_secrets" {
+resource "google_kms_crypto_key" "database_encryption" {
   name            = "${var.cluster_name}-kms-key"
-  key_ring        = google_kms_key_ring.kubernetes_secrets.id
+  key_ring        = google_kms_key_ring.database_encryption.id
   rotation_period = "7776000s"
 
   lifecycle {
@@ -101,11 +105,22 @@ resource "google_kms_crypto_key" "kubernetes_secrets" {
   }
 }
 
-resource "google_kms_crypto_key_iam_binding" "kubernetes_secrets" {
-  crypto_key_id = google_kms_crypto_key.kubernetes_secrets.id
+resource "google_kms_crypto_key_iam_binding" "database_encryption" {
+  crypto_key_id = google_kms_crypto_key.database_encryption.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   members = [
     "serviceAccount:${module.gke.service_account}",
     "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
   ]
+}
+
+#K8s Upgrade notification pubsub
+resource "google_pubsub_topic" "example" {
+  name = "example-topic"
+
+  labels = {
+    foo = "bar"
+  }
+
+  message_retention_duration = "86600s"
 }
