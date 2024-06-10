@@ -25,6 +25,7 @@ module "gke" {
   network_tags               = var.network_tags
   master_authorized_networks = var.master_authorized_networks
   configure_ip_masq          = false
+  non_masquerade_cidrs       = []
 
   database_encryption = [{
     state    = "ENCRYPTED"

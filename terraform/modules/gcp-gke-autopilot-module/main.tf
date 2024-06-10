@@ -28,6 +28,7 @@ module "gke" {
   enable_private_nodes       = true
   network_tags               = var.network_tags
   configure_ip_masq          = var.configure_ip_masq
+  non_masquerade_cidrs       = var.non_masquerade_cidrs
 
   http_load_balancing             = var.http_load_balancing
   gateway_api_channel             = var.gateway_api_channel
