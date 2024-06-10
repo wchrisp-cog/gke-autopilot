@@ -13,7 +13,7 @@ module "gke" {
   subnetwork                      = var.subnetwork
   ip_range_pods                   = var.ip_range_pods
   ip_range_services               = var.ip_range_services
-  master_authorized_networks = var.master_authorized_networks
+  master_authorized_networks      = var.master_authorized_networks
   release_channel                 = var.release_channel
   enable_vertical_pod_autoscaling = true
   enable_private_endpoint         = true
