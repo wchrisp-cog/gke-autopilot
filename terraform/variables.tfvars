@@ -3,8 +3,8 @@ environment  = "nonprod"
 tier         = "hsec"
 
 deletion_protection = false
-release_channel     = "REGULAR"
-# kubernetes_version  = "1.28.8-gke.1095000"
+release_channel     = "STABLE"
+# kubernetes_version  = "1.26.15-gke.1090000"
 
 
 # Maintenance Period
@@ -34,18 +34,18 @@ maintenance_exclusions = [
     end_time        = "2025-01-03T00:00:00Z"
     exclusion_scope = "NO_UPGRADES"
   },
-  {
-    name            = "Public holiday"
-    start_time      = "2024-06-23T00:00:00Z"
-    end_time        = "2024-07-03T00:00:00Z"
-    exclusion_scope = "NO_MINOR_UPGRADES"
-  },
-  {
-    name            = "Application Release v2"
-    start_time      = "2024-06-23T00:00:00Z"
-    end_time        = "2024-07-03T00:00:00Z"
-    exclusion_scope = "NO_MINOR_OR_NODE_UPGRADES"
-  }
+  # {
+  #   name            = "Public holiday"
+  #   start_time      = "2024-06-23T00:00:00Z"
+  #   end_time        = "2024-07-03T00:00:00Z"
+  #   exclusion_scope = "NO_MINOR_UPGRADES"
+  # },
+  # {
+  #   name            = "Application Release v2"
+  #   start_time      = "2024-06-23T00:00:00Z"
+  #   end_time        = "2024-07-03T00:00:00Z"
+  #   exclusion_scope = "NO_MINOR_OR_NODE_UPGRADES"
+  # }
 ]
 
 master_authorized_networks = [

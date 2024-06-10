@@ -13,6 +13,7 @@ module "gke" {
   subnetwork                      = var.subnetwork
   ip_range_pods                   = var.ip_range_pods
   ip_range_services               = var.ip_range_services
+  master_authorized_networks = var.master_authorized_networks
   release_channel                 = var.release_channel
   enable_vertical_pod_autoscaling = true
   enable_private_endpoint         = true
@@ -21,8 +22,9 @@ module "gke" {
   deletion_protection             = var.deletion_protection
   database_encryption             = var.database_encryption
   notification_config_topic       = var.notification_config_topic
+  workload_config_audit_mode      = var.workload_config_audit_mode
+  workload_vulnerability_mode     = var.workload_vulnerability_mode
 
-  master_authorized_networks = var.master_authorized_networks
 
   maintenance_start_time = var.maintenance_period.start_time
   maintenance_end_time   = var.maintenance_period.end_time

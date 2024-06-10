@@ -22,13 +22,10 @@ module "gke" {
   subnetwork                 = local.subnet_names[index(module.gcp-network.subnets_names, local.subnet_name)]
   ip_range_pods              = local.pods_range_name
   ip_range_services          = local.svc_range_name
-  enable_private_endpoint    = true
-  enable_private_nodes       = true
   network_tags               = var.network_tags
   master_authorized_networks = var.master_authorized_networks
   configure_ip_masq          = false
 
-  enable_vertical_pod_autoscaling = true
   database_encryption = [{
     state    = "ENCRYPTED"
     key_name = google_kms_crypto_key.database_encryption.id
