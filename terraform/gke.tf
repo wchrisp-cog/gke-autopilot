@@ -2,12 +2,12 @@
 module "gke" {
   source = "./modules/gcp-gke-autopilot-module"
 
-  project_id  = var.project_id
-  name        = var.cluster_name
-  tier        = var.tier
-  environment = var.environment
-  region      = var.region
-  fleet_project = var.fleet_project
+  project_id                        = var.project_id
+  name                              = var.cluster_name
+  tier                              = var.tier
+  environment                       = var.environment
+  region                            = var.region
+  fleet_project                     = var.fleet_project
   fleet_project_grant_service_agent = false
 
   release_channel    = var.release_channel
@@ -26,7 +26,7 @@ module "gke" {
   enable_private_nodes       = true
   network_tags               = var.network_tags
   master_authorized_networks = var.master_authorized_networks
-  configure_ip_masq          = true
+  configure_ip_masq          = false
 
   enable_vertical_pod_autoscaling = true
   database_encryption = [{
