@@ -1,7 +1,11 @@
 resource "helm_release" "release" {
-  count      = length(var.helm_release)
-  name       = var.helm_release[count.index].name
-  repository = var.helm_release[count.index].repository
-  chart      = var.helm_release[count.index].chart
-  version    = var.helm_release[count.index].version
+  for_each = var.helm_release
+
+  name       = each.key
+  repository = each.value.repository
+  chart      = each.value.chart
+  version    = each.value.version
+  lint       = true
+
+  depends_on = [module.gke]
 }

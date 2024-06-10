@@ -81,11 +81,12 @@ variable "fleet_project" {
 
 variable "helm_release" {
   description = "The helm releases you would like to deploy to the GKE Cluster"
-  type = list(object({
-    name       = string,
-    repository = string,
-    chart      = string,
-    version    = string
-  }))
-  default = []
+  type = map(
+    object({
+      repository = string,
+      chart      = string,
+      version    = string
+    })
+  )
+  default = {}
 }

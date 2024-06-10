@@ -55,17 +55,15 @@ master_authorized_networks = [
   },
 ]
 
-# helm_release = [
-#   {
-#     name       = "argo",
-#     repository = "https://argoproj.github.io/argo-helm",
-#     chart      = "argo-cd",
-#     version    = "7.1.3"
-#   },
-#   {
-#     name       = "argo-test2",
-#     repository = "https://argoproj.github.io/argo-helm",
-#     chart      = "argo-cd",
-#     version    = "7.1.3"
-#   }
-# ]
+helm_release = {
+  argo-cd = {
+    repository = "https://argoproj.github.io/argo-helm",
+    chart      = "argo-cd",
+    version    = "7.1.3"
+  },
+  external-secrets = {
+    repository = "https://charts.external-secrets.io",
+    chart      = "external-secrets/external-secrets",
+    version    = "0.9.19"
+  }
+}
